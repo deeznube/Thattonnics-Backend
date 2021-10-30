@@ -11,8 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name="orders")
@@ -72,12 +71,36 @@ public class Order {
 		this.buyer = buyer;
 	}
 
-	public String getCreated_buy() {
-		return created_buy;
+	public String getCreated_by() {
+		return created_by;
 	}
 
-	public void setCreated_buy(String created_buy) {
-		this.created_buy = created_buy;
+	public void setCreated_by(String created_by) {
+		this.created_by = created_by;
+	}
+
+	public Date getCreated_date() {
+		return created_date;
+	}
+
+	public void setCreated_date(Date created_date) {
+		this.created_date = created_date;
+	}
+
+	public Date getArrived_date() {
+		return arrived_date;
+	}
+
+	public void setArrived_date(Date arrived_date) {
+		this.arrived_date = arrived_date;
+	}
+
+	public Date getClosed_date() {
+		return closed_date;
+	}
+
+	public void setClosed_date(Date closed_date) {
+		this.closed_date = closed_date;
 	}
 
 	private Integer status;
@@ -88,19 +111,21 @@ public class Order {
 	
 	private String buyer;
 	
-	private String created_buy;
+	private String created_by;
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date created_date;  
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Bangkok")
+	private Date created_date = new Date();  
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date arrived_date;  
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Bangkok")
+	private Date arrived_date = new Date();  
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date closed_date; 
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Bangkok")
+	private Date closed_date = new Date(); 
 	
 	@Override
 	public String toString() {
-		return "Category [id=" + order_id + ", Status=" + status + ", quantity=" + quantity + ", vendor=" + vendor +"]";
+		return "Category [id=" + order_id + ", status=" + status + ", quantity=" + quantity + ", vendor=" + vendor 
+		+ ", buyer=" + buyer + ", created_by=" + created_by + ", created_date=" + created_date 
+		+ ", arrived_date=" + arrived_date + ", closed_date=" + closed_date + "]";
 	}
 }
