@@ -23,11 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.models.ERole;
 import com.example.demo.models.Role;
 import com.example.demo.models.User;
+import com.example.demo.models.UserInfo;
 import com.example.demo.payload.request.LoginRequest;
 import com.example.demo.payload.request.SignupRequest;
 import com.example.demo.payload.response.JwtResponse;
 import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.repository.RoleRepository;
+import com.example.demo.repository.UserInfoRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.security.services.UserDetailsImpl;
@@ -41,6 +43,9 @@ public class AuthController {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	UserInfoRepository userInfoRepository;
 
 	@Autowired
 	RoleRepository roleRepository;
@@ -121,6 +126,10 @@ public class AuthController {
 			});
 		}
 
+		UserInfo user_info = new UserInfo();
+		user_info.setAvatar("1");
+		user_info.setUser(user);
+		user.setUser_info(user_info);
 		user.setRoles(roles);
 		userRepository.save(user);
 

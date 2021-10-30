@@ -4,6 +4,8 @@ import java.util.Set;
 
 import javax.validation.constraints.*;
 
+import com.example.demo.models.UserInfo;
+
 public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)
@@ -15,6 +17,8 @@ public class SignupRequest {
     private String email;
     
     private Set<String> role;
+
+    private UserInfo user_info;
     
     @NotBlank
     @Size(min = 6, max = 40)
@@ -50,6 +54,14 @@ public class SignupRequest {
     
     public void setRole(Set<String> role) {
       this.role = role;
+    }
+
+    public UserInfo getUser_info() {
+        return user_info;
+    }
+
+    public void setUser_info(UserInfo user_info) {
+        this.user_info = user_info;
     }
     
 }
