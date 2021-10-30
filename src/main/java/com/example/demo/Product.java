@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Product {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer product_id;
 
 	private String name;
@@ -46,7 +46,7 @@ public class Product {
 	public void setCategory(Category c) {
 		this.category=c;
 	}
-	
+		
 	@OneToMany(targetEntity=Order.class, mappedBy="product",
     		cascade=CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Order> orders;
