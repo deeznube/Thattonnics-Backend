@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,14 @@ public class CategoryController {
 	@Autowired
 	private CategoryRepository categoryRepository;
 	
+	//http://localhost:8081/api/category/
+	@GetMapping("/category")
+	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
+	public ResponseEntity<List<Category>> getCategory() throws ResourceNotFound {
+		List<Category> categories = (List<Category>) categoryRepository.findAll();
+		return ResponseEntity.ok().body(categories);
+	}
+
 	//http://localhost:8081/api/category/create?name=ram
 	@GetMapping("/category/create")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
