@@ -1,22 +1,24 @@
 package com.example.demo;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.payload.request.CategoryRequest;
-import com.example.demo.payload.request.ProductRequest;
+
 import com.example.demo.payload.response.MessageResponse;
 
 @RestController
@@ -26,52 +28,63 @@ public class ProductController {
 	@Autowired
 	private ProductRepository productRepository;
 	
-	@Autowired
-	private CategoryRepository categoryRepository;
-	
-	
-	//http://localhost:8082/api/product/create?name=Laptop&desc=โน๊ตบุ๊คเท่ๆ&qty=22&category_id=1
-	@GetMapping("/product/create")
+	//http://localhost:8081/api/product/
+	@GetMapping("/product")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
-	public ResponseEntity<Product> createProduct(
-			@Valid Product product,
-			@RequestParam(value="name")String name,
-			@RequestParam(value="desc")String desc,
-			@RequestParam(value="qty")Integer qty,
-			@RequestParam(value="category_id")Integer category_id) throws ResourceNotFound {
-		Category category = categoryRepository.findById(category_id)
-				.orElseThrow(() -> new ResourceNotFound("Error not found"));
-		product.setProduct_id(product.getProduct_id());
-		product.setName(name);
-		product.setDescription(desc);
-		product.setQuantity(qty);
-		product.setCategory(category);
-		productRepository.save(product);
-		return ResponseEntity.ok().body(product);
+	public ResponseEntity<List<Product>> getProduct() throws ResourceNotFound {
+		List<Product> products = (List<Product>) productRepository.findAll();
+		return ResponseEntity.ok().body(products);
 	}
 	
 	@PostMapping("/product/create")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<?> createProduct(
-			@Valid @RequestBody Product productRe){
-		if (productRepository.existsByName(productRe.getName())) {
+			@Valid @RequestBody Product productRequest){
+		if (productRepository.existsByName(productRequest.getName())) {
 			return ResponseEntity
 					.badRequest().body(new MessageResponse("Error: Name is already taken"));
 		}
 		
 		//Create new Product
-		//Optional<Category> category = categoryRepository.findById(productRe.getCategory());
-		System.out.println(productRe.getCategory()); //getCategory can get NULL !!!--------------------
-		Product product = new Product(
-				productRe.getProduct_id(),
-				productRe.getName(),
-				productRe.getDescription(),
-				productRe.getQuantity(),
-				productRe.getCategory());
-		//product.setCategory(categoryRepository.getById(productRe.setCategory(productRe.getCategory())));
-		System.out.println(product);
+		/*{
+    		"name": "Telephone",
+    		"description": "เครื่องมือสื่อสารทา่งไกล",
+    		"quantity": "29",
+    		"category": {"category_id":"2"}
+		}*/
+			Product product = new Product(
+					productRequest.getName(),
+					productRequest.getDescription(),
+					productRequest.getQuantity(),
+					productRequest.getCategory());
+			
 		productRepository.save(product);
 		return ResponseEntity.ok().body(product);
+	}
+	
+	//http://localhost:8081/api/product/update?id=1
+	@PutMapping("/product/update")
+	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
+	public ResponseEntity<Product> updateProduct(@RequestParam(value="id")Integer id, @RequestBody Product productRequest) throws ResourceNotFound {
+		Optional<Product> product = productRepository.findById(id);
+		if (product.isPresent()) {
+			Product _product = product.get();
+			if (productRequest.getName() != null) {
+				_product.setName(productRequest.getName());
+			}
+			if (productRequest.getDescription() != null) {
+				_product.setDescription(productRequest.getDescription());
+			}
+			if (productRequest.getQuantity() != null) {
+				_product.setQuantity(productRequest.getQuantity());
+			}
+			if (productRequest.getCategory() != null) {
+				_product.setCategory(productRequest.getCategory());
+			}
+			return new ResponseEntity<>(productRepository.save(_product), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	//http://localhost:8081/api/product/delete?name=Notebook

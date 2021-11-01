@@ -86,8 +86,7 @@ public class Product {
 		return "Category [id=" + product_id + ", name=" + name + ", Des=" + description + ", quantity=" + quantity +"]";
 	}
 	
-	public Product(Integer product_id,String name, String description, Integer quantity, Category category ) {
-		this.product_id = product_id;
+	public Product(String name, String description, Integer quantity, Category category ) {
 		this.name = name;
 		this.description = description;
 		this.quantity = quantity;

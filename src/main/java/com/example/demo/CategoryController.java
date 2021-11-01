@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.models.User;
-import com.example.demo.models.UserInfo;
-import com.example.demo.payload.request.CategoryRequest;
 import com.example.demo.payload.response.MessageResponse;
 
 @RestController
@@ -42,7 +39,7 @@ public class CategoryController {
 	@PostMapping("/category/create")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<?> createCategory(
-			@Valid @RequestBody CategoryRequest categoryRequest){
+			@Valid @RequestBody Category categoryRequest){
 		if (categoryRepository.existsByName(categoryRequest.getName())) {
 			return ResponseEntity
 					.badRequest().body(new MessageResponse("Error: Name is already taken"));
@@ -57,17 +54,16 @@ public class CategoryController {
 	//http://localhost:8081/api/category/update?id=1
 	@PutMapping("/category/update")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
-	public ResponseEntity<Category> updateCategory(@RequestParam(value="id")Integer id, @RequestBody Category cateRe) throws ResourceNotFound {
+	public ResponseEntity<Category> updateCategory(@RequestParam(value="id")Integer id, @RequestBody Category categoryRequest) throws ResourceNotFound {
 		Optional<Category> category = categoryRepository.findById(id);
 		if (category.isPresent()) {
 			Category _category = category.get();
-			_category.setName(cateRe.getName());
+			_category.setName(categoryRequest.getName());
 			
 			return new ResponseEntity<>(categoryRepository.save(_category), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-
 	}
 	
 	//http://localhost:8081/api/category/delete?name=ขนมปัง

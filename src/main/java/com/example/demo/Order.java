@@ -122,10 +122,16 @@ public class Order {
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Bangkok")
 	private Date closed_date = new Date(); 
 	
-	@Override
-	public String toString() {
-		return "Category [id=" + order_id + ", status=" + status + ", quantity=" + quantity + ", vendor=" + vendor 
-		+ ", buyer=" + buyer + ", created_by=" + created_by + ", created_date=" + created_date 
-		+ ", arrived_date=" + arrived_date + ", closed_date=" + closed_date + "]";
+	
+	public Order(String buyer, String created_by, String vendor,Integer quantity,Product product ) {
+		this.buyer = buyer;
+		this.created_by = created_by;
+		this.vendor = vendor;
+		this.quantity = quantity;
+		this.product = product;
+	}
+	
+	public Order() {
+		
 	}
 }
