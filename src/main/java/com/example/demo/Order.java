@@ -114,13 +114,13 @@ public class Order {
 	private String created_by;
 	
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Bangkok")
-	private Date created_date = new Date();  
+	private Date created_date; 
 	
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Bangkok")
-	private Date arrived_date = new Date();  
+	private Date arrived_date; 
 	
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Bangkok")
-	private Date closed_date = new Date(); 
+	private Date closed_date;
 	
 	
 	public Order(String buyer, String created_by, String vendor,Integer quantity,Product product ) {

@@ -52,6 +52,10 @@ public class OrderController {
 		
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
 		order.setCreated_date(calendar.getTime()); //Why set all date <Ceateed_date, Closerd_date, Arrived_date> ??
+		
+		order.setStatus(0);
+		//order.setClosed_date(null);
+		//order.setArrived_date(null);
 		orderRepository.save(order);
 	return ResponseEntity.ok().body(order);
 	}
