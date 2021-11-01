@@ -85,5 +85,17 @@ public class Product {
 	public String toString() {
 		return "Category [id=" + product_id + ", name=" + name + ", Des=" + description + ", quantity=" + quantity +"]";
 	}
+	
+	public Product(Integer product_id,String name, String description, Integer quantity, Category category ) {
+		this.product_id = product_id;
+		this.name = name;
+		this.description = description;
+		this.quantity = quantity;
+		this.category = category;
+	}
+	
+	public Product() {
+		
+	}
 
 }

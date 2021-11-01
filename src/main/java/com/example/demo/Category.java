@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.example.demo.models.UserInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -56,5 +57,14 @@ public class Category {
 	public void setName(String name) {
 		this.name = name;
 	}
-	 
+	
+	public Category(String name) {
+		this.name = name;
+	}
+	
+	public Category() {
+		
+	}
+	
+
 }
