@@ -27,6 +27,9 @@ public class ProductController {
 	
 	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	//http://localhost:8081/api/product/
 	@GetMapping("/product")
@@ -79,7 +82,8 @@ public class ProductController {
 				_product.setQuantity(productRequest.getQuantity());
 			}
 			if (productRequest.getCategory() != null) {
-				_product.setCategory(productRequest.getCategory());
+				Optional<Category> category = categoryRepository.findById(productRequest.getCategory().getCategory_id());
+				_product.setCategory(category.get());
 			}
 			return new ResponseEntity<>(productRepository.save(_product), HttpStatus.OK);
 		} else {
