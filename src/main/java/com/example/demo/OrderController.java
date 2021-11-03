@@ -56,6 +56,7 @@ public class OrderController {
 				order.setBuyer(orderRequest.getBuyer());
 				order.setVendor(orderRequest.getVendor());
 				order.setQuantity(orderRequest.getQuantity());
+				order.setCreated_by(orderRequest.getCreated_by());
 				order.setCreated_date(calendar.getTime());
 				order.setStatus(0);
 
