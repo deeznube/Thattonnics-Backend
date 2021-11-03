@@ -26,6 +26,9 @@ public class CategoryController {
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private ProductRepository productRepository;
 	
 	//http://localhost:8081/api/category/
 	@GetMapping("/category")
@@ -69,10 +72,21 @@ public class CategoryController {
 	//http://localhost:8081/api/category/delete?name=ขนมปัง
     @DeleteMapping("/category/delete")
     @PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
-    public ResponseEntity<Category> deleteCategory(
-    		@RequestParam(value="name")String name) throws ResourceNotFound{
-    	Category category = categoryRepository.findByName(name);
-    	categoryRepository.delete(category);
-    	return ResponseEntity.ok().body(category);
+    public ResponseEntity<?> deleteCategory(
+    		@RequestParam(value="id")Integer id) throws ResourceNotFound{
+    	Optional<Category> category = categoryRepository.findById(id);
+		if (category.isPresent()){
+			List<Product> product = productRepository.findByCategory(category.get());
+			for(int i=0; i<product.size(); i++) {
+				Product _product = product.get(i);
+				_product.setCategory(null);
+				productRepository.save(_product);
+			}
+			categoryRepository.delete(category.get());
+			return ResponseEntity.ok().body("Category delete successful");
+		}
+    	else{
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
     }
 }

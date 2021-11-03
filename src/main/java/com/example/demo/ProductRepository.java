@@ -23,4 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer>{
 
 	@Query(value = "SELECT c.name, SUM(p.quantity) as QTY FROM Product p JOIN p.category c ON p.category.category_id = c.category_id GROUP BY p.category.category_id ORDER BY QTY DESC")
 	List<Object[]> getProductAmountByCategory();
+
+	List<Product> findByCategory(Category category);
 }
