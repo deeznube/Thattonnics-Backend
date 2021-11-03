@@ -80,6 +80,10 @@ public class Product {
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
+
+	public void addQuantity(Integer quantity){
+		this.quantity += quantity;
+	}
 	
 	@Override
 	public String toString() {

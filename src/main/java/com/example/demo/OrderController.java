@@ -27,6 +27,9 @@ public class OrderController {
 
 	@Autowired
 	private OrderRepository orderRepository;
+
+	@Autowired
+	private ProductRepository productRepository;
 	
 	//http://localhost:8081/api/order/
 	@GetMapping("/order")
@@ -42,22 +45,34 @@ public class OrderController {
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<?> createOrder(
 			@Valid @RequestBody Order orderRequest){
-		
-		Order order = new Order(
-				orderRequest.getBuyer(),
-				orderRequest.getCreated_by(),
-				orderRequest.getVendor(),
-				orderRequest.getQuantity(),
-				orderRequest.getProduct());
-		
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
-		order.setCreated_date(calendar.getTime()); //Why set all date <Ceateed_date, Closerd_date, Arrived_date> ??
-		
-		order.setStatus(0);
-		//order.setClosed_date(null);
-		//order.setArrived_date(null);
-		orderRepository.save(order);
-	return ResponseEntity.ok().body(order);
+
+		if (orderRequest.getBuyer() != null
+			&& orderRequest.getVendor() != null
+			&& orderRequest.getQuantity() > 0
+			&& orderRequest.getProduct() != null) {
+				Order order = new Order();
+				
+				Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
+				order.setBuyer(orderRequest.getBuyer());
+				order.setVendor(orderRequest.getVendor());
+				order.setQuantity(orderRequest.getQuantity());
+				order.setCreated_date(calendar.getTime());
+				order.setStatus(0);
+
+				Optional<Product> product = productRepository.findById(orderRequest.getProduct().getProduct_id());
+				if (product.isPresent()) {
+					order.setProduct(product.get());
+				}
+				else{
+					return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+				}
+
+				orderRepository.save(order);
+				return ResponseEntity.ok().body(order);
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		}
 	}
 	
 	//http://localhost:8081/api/order/update?id=1
@@ -99,7 +114,7 @@ public class OrderController {
     	return ResponseEntity.ok().body(_order);
     }
 	
-	@GetMapping("/confirm/order")
+	@GetMapping("/order/confirm")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<Order> updateToComfirm(@RequestParam(value="id")Integer order_id) throws ResourceNotFound {
 		Order order = orderRepository.findById(order_id)
@@ -109,7 +124,7 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 	
-	@GetMapping("/packing/order")
+	@GetMapping("/order/packing")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<Order> updateToPacking(@RequestParam(value="id")Integer order_id) throws ResourceNotFound {
 		Order order = orderRepository.findById(order_id)
@@ -119,7 +134,7 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 	
-	@GetMapping("/sending/order")
+	@GetMapping("/order/sending")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<Order> updateToSending(@RequestParam(value="id")Integer order_id) throws ResourceNotFound {
 		Order order = orderRepository.findById(order_id)
@@ -129,7 +144,7 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 	
-	@GetMapping("/arrived/order")
+	@GetMapping("/order/arrived")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<Order> updateToArrived(@RequestParam(value="id")Integer order_id) throws ResourceNotFound {
 		Order order = orderRepository.findById(order_id)
@@ -141,19 +156,26 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 
-	@GetMapping("/success/order")
+	@GetMapping("/order/success")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
-	public ResponseEntity<Order> updateToSuccess(@RequestParam(value="id")Integer order_id) throws ResourceNotFound {
+	public ResponseEntity<Order> updateToSuccess(@RequestParam(value="id")Integer order_id, @RequestParam(value="isImport")boolean isImport) throws ResourceNotFound {
 		Order order = orderRepository.findById(order_id)
 				.orElseThrow(() -> new ResourceNotFound("Error not found"));
-		order.setStatus(5);
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
-		order.setClosed_date(calendar.getTime());
-		orderRepository.save(order);
-		return ResponseEntity.ok().body(order);
+		Optional<Product> product = productRepository.findById(order.getProduct().getProduct_id());
+		if (product.isPresent()) {
+			product.get().addQuantity(order.getQuantity());
+			productRepository.save(product.get());
+			order.setStatus(5);
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
+			order.setClosed_date(calendar.getTime());
+			orderRepository.save(order);
+			return ResponseEntity.ok().body(order);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}		
 	}
 
-	@GetMapping("/cancel/order")
+	@GetMapping("/order/cancel")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<Order> updateToCancel(@RequestParam(value="id")Integer order_id) throws ResourceNotFound {
 		Order order = orderRepository.findById(order_id)
