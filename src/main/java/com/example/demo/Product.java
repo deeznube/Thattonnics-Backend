@@ -81,8 +81,12 @@ public class Product {
 		this.quantity = quantity;
 	}
 
-	public void addQuantity(Integer quantity){
+	public void addQuantity(Integer quantity) {
 		this.quantity += quantity;
+	}
+
+	public void removeQuantity(Integer quantity){
+		this.quantity -= quantity;
 	}
 	
 	@Override

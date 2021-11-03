@@ -164,7 +164,12 @@ public class OrderController {
 				.orElseThrow(() -> new ResourceNotFound("Error not found"));
 		Optional<Product> product = productRepository.findById(order.getProduct().getProduct_id());
 		if (product.isPresent()) {
-			product.get().addQuantity(order.getQuantity());
+			if (isImport == true) {
+				product.get().addQuantity(order.getQuantity());
+			}
+			else {
+				product.get().removeQuantity(order.getQuantity());
+			}
 			productRepository.save(product.get());
 			order.setStatus(5);
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
