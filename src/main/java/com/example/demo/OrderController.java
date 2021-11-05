@@ -30,12 +30,14 @@ public class OrderController {
 
 	@Autowired
 	private ProductRepository productRepository;
+
 	
 	//http://localhost:8081/api/order/
 	@GetMapping("/order")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<List<Order>> getOrder() throws ResourceNotFound {
 		List<Order> orders = (List<Order>) orderRepository.findAll();
+		System.out.println(productRepository);
 		return ResponseEntity.ok().body(orders);
 	}
 	

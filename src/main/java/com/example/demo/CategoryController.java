@@ -35,6 +35,7 @@ public class CategoryController {
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('ADMIN')")
 	public ResponseEntity<List<Category>> getCategory() throws ResourceNotFound {
 		List<Category> categories = (List<Category>) categoryRepository.findAll();
+		System.out.println(productRepository);
 		return ResponseEntity.ok().body(categories);
 	}
 

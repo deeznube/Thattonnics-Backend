@@ -5,14 +5,12 @@ import java.util.Optional;
 import com.example.demo.ResourceNotFound;
 import com.example.demo.models.User;
 import com.example.demo.models.UserInfo;
-import com.example.demo.repository.UserInfoRepository;
 import com.example.demo.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
